@@ -1,0 +1,70 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    word-break: break-all;
+}
+
+#main {
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background: rgba(30, 29, 29, 0.85);
+}
+
+#title {
+    margin: 0 0 1px 0;
+    color: rgba(227, 223, 223, 0.94);
+    text-align: center;
+    border-top: 1px #b0b0b0 solid;
+    border-bottom: 1px #b0b0b0 solid;
+}
+
+#console {
+    height: 90%;
+    color: rgba(227, 223, 223, 0.94);
+    overflow-y: scroll;
+    margin-left: 2px;
+}
+
+#input {
+    width: 100%;
+    height: 35px;
+    position: absolute;
+    margin: 0;
+}
+
+#input textarea {
+    width: 100%;
+    height: 100% !important;
+    color: rgba(227, 223, 223, 0.94);
+    font-size: 1rem;
+    background: #3b3b3b;
+    border: 1px #b0b0b0 solid;
+}
+
+#input textarea:focus {
+    outline: none;
+    border: 1px #b0b0b0 solid;
+}
+
+.sysmsg {
+    color: rgba(229, 84, 84, 0.89);
+    font-weight: bold;
+}
+
+.usermsg {
+    color: rgba(227, 223, 223, 0.94);
+}
+
+.help {
+    margin-left: 5px;
+}
+
+.help-url a {
+    text-decoration: none;
+    outline: none;
+    color: rgba(227, 223, 223, 0.94);
+}
