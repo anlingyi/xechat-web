@@ -267,7 +267,7 @@ function createClient(host, port, url) {
 
     socket.onopen = e => {
         // 心跳检测动作
-        heartbeatAction(5)
+        heartbeatAction(15)
         // 登录动作
         loginAction(username, 'FISHING', '')
         cleanConsole()
