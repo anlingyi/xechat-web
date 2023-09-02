@@ -424,6 +424,7 @@ function userMsgHandler(msg) {
     const region = showUserRegion(user.region)
     const role = showRole(user.role)
     const status = showUserStatus(user.status)
+    const platform = user.platform === 'WEB' ? ' ༄' : ' ♨'
     const body = msg.body
     const type = body.msgType
     let content = ''
@@ -434,7 +435,7 @@ function userMsgHandler(msg) {
     }
 
     showConsole('<div class="usermsg"><b>[' + msg.time + '] [' + region + '] '
-        + user.username + ' (' + status + ') ' + role  + '：' + content + '</div>')
+        + user.username + ' (' + status + ')' + platform + role + '：' + content + '</div>')
 
     gotoConsoleLow()
 }
@@ -545,7 +546,7 @@ function showUserStatus(status) {
 function showRole(role) {
     switch (role) {
         case 'ADMIN':
-            return '☆'
+            return ' ☆'
     }
     return ''
 }
