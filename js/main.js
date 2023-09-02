@@ -15,7 +15,7 @@ $(() => {
     helpCmdHandler()
     $('#inputArea').on('keydown', e => {
         if (e.key === 'Enter') {
-            e.preventDefault();
+            e.preventDefault()
             const content = $('#inputArea').val()
             if (content) {
                 if (content.startsWith('#')) {
@@ -129,7 +129,7 @@ function showServerCmdHandler(params) {
 function updateServerList() {
     $.ajaxSetup({
         async: false
-    });
+    })
 
     $.get('server_list.json', resp => {
         serverList = resp
@@ -168,7 +168,7 @@ function loginCmdHandler(params) {
     const serverNum = getCmdValue(params, 's')
 
     if (!h && !p) {
-        const cacheHost = localStorage.getItem('xechat-host');
+        const cacheHost = localStorage.getItem('xechat-host')
         if (cacheHost) {
             h = cacheHost.split(':')[0]
             p = cacheHost.split(':')[1]
@@ -241,9 +241,9 @@ function helpCmdHandler() {
  * @returns {*|null}
  */
 function getCmdValue(str, paramName) {
-    const regex = new RegExp(`-${paramName} ([^\\s]+)`);
-    const match = str.match(regex);
-    return match ? match[1] : null;
+    const regex = new RegExp(`-${paramName} ([^\\s]+)`)
+    const match = str.match(regex)
+    return match ? match[1] : null
 }
 
 /**
@@ -253,7 +253,7 @@ function getCmdValue(str, paramName) {
  * @returns {WebSocket}
  */
 function createClient(host, port, url) {
-    const socket = new WebSocket('ws://' + host + ':'  + port + url);
+    const socket = new WebSocket('ws://' + host + ':'  + port + url)
     let timeoutFlag
     const timeout = setTimeout(() => {
         clearTimeout(timeout)
@@ -261,9 +261,9 @@ function createClient(host, port, url) {
             timeoutFlag = true
             connecting = false
             showConsole('<div>连接服务器超时！</div>')
-            socket.close();
+            socket.close()
         }
-    }, 15000);
+    }, 15000)
 
     socket.onopen = e => {
         // 心跳检测动作
@@ -273,7 +273,7 @@ function createClient(host, port, url) {
         cleanConsole()
 
         localStorage.setItem('xechat-host', host + ':' + port)
-        connecting = false;
+        connecting = false
     }
 
     socket.onclose = e => {
@@ -281,7 +281,7 @@ function createClient(host, port, url) {
             return
         }
 
-        connecting = false;
+        connecting = false
         showTitle('控制台')
         showConsole('<div>已断开连接！</div>')
     }
@@ -298,7 +298,7 @@ function createClient(host, port, url) {
         showConsole('<dvi>你干嘛~ 哎哟！</dvi>')
     }
 
-    return socket;
+    return socket
 }
 
 function checkSocket() {
@@ -317,7 +317,7 @@ function heartbeatAction(sec) {
 
     const heartbeatInterval = setInterval(() => {
         if (checkSocket()) {
-            socket.send(JSON.stringify(msg));
+            socket.send(JSON.stringify(msg))
         } else {
             clearInterval(heartbeatInterval)
         }
@@ -333,7 +333,7 @@ function heartbeatAction(sec) {
  */
 function loginAction(username, status, token) {
     if (!checkSocket()) {
-        return;
+        return
     }
 
     const msg = {
@@ -446,7 +446,7 @@ function userMsgHandler(msg) {
  */
 function historyMsgHandler(msg) {
     showConsole('<div>正在加载历史消息...<div>')
-    let msgList = msg.body.msgList;
+    let msgList = msg.body.msgList
     msgList.forEach(msg => msgHandler(msg))
     showConsole('<div>------以上是历史消息------<div>')
 }
@@ -568,16 +568,18 @@ function cleanConsole() {
 
 /**
  * 跳到控制台底部
+ *
+ * @param force 是否强制跳转
  */
 function gotoConsoleLow(force) {
-    const e = document.getElementById('console');
-    const scrollHeight = e.scrollHeight;
-    const clientHeight = e.clientHeight;
-    const scrollTop = e.scrollTop;
-    const distanceToBottom = scrollHeight - clientHeight - scrollTop;
+    const e = document.getElementById('console')
+    const scrollHeight = e.scrollHeight
+    const clientHeight = e.clientHeight
+    const scrollTop = e.scrollTop
+    const distanceToBottom = scrollHeight - clientHeight - scrollTop
 
     if (force || distanceToBottom <= 50) {
-        e.scrollTop = scrollHeight;
+        e.scrollTop = scrollHeight
     }
 }
 
@@ -603,20 +605,20 @@ function getUUID() {
  */
 function generateUUID() {
     if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
-        const data = new Uint32Array(4);
-        window.crypto.getRandomValues(data);
+        const data = new Uint32Array(4)
+        window.crypto.getRandomValues(data)
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            const r = (data[0] & 0x3fffffff + (data[1] & 0x0fffffff) * 0x10000000) % 16 | 0;
-            data[0] >>= 4;
-            data[1] >>= 4;
-            return (c === 'x' ? r : (r & 0x7 | 0x8)).toString(16);
-        });
+            const r = (data[0] & 0x3fffffff + (data[1] & 0x0fffffff) * 0x10000000) % 16 | 0
+            data[0] >>= 4
+            data[1] >>= 4
+            return (c === 'x' ? r : (r & 0x7 | 0x8)).toString(16)
+        })
     } else {
-        console.warn('浏览器不支持crypto API，使用备用方法生成UUID');
+        console.warn('浏览器不支持crypto API，使用备用方法生成UUID')
         // 在不支持crypto API的环境中使用备用方法
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            const r = Math.random() * 16 | 0;
-            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-        });
+            const r = Math.random() * 16 | 0
+            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16)
+        })
     }
 }
