@@ -130,7 +130,7 @@ function updateServerList() {
         async: false
     });
 
-    $.get('../server_list.json', resp => {
+    $.get('server_list.json', resp => {
         serverList = resp
     })
 }
@@ -165,13 +165,20 @@ function loginCmdHandler(params) {
     let h = getCmdValue(params, 'h')
     let p = getCmdValue(params, 'p')
     const serverNum = getCmdValue(params, 's')
-    const clean = getCmdValue(params, 'c')
 
-    if (!h) {
-        h = host
-    }
-    if (!p) {
-        p = port
+    if (!h && !p) {
+        const cacheHost = localStorage.getItem('xechat-host');
+        if (cacheHost) {
+            h = cacheHost.split(':')[0]
+            p = cacheHost.split(':')[1]
+        }
+    } else {
+        if (!h) {
+            h = host
+        }
+        if (!p) {
+            p = port
+        }
     }
 
     if (serverNum) {
@@ -191,15 +198,7 @@ function loginCmdHandler(params) {
         }
     }
 
-    if (!h && !p) {
-        const cacheHost = localStorage.getItem('xechat-host');
-        if (cacheHost) {
-            h = cacheHost.split(':')[0]
-            p = cacheHost.split(':')[1]
-        }
-    }
-
-    if (clean) {
+    if (params.includes(' -c')) {
         localStorage.removeItem('xechat-host')
         h = host
         p = port

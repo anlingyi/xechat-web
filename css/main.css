@@ -3,6 +3,8 @@ body {
     padding: 0;
     font-size: 14px;
     word-break: break-all;
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 #main {
