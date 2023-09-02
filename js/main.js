@@ -12,6 +12,7 @@ const port = 1025
 const url = '/xechat'
 
 $(() => {
+    helpCmdHandler()
     $('#inputArea').on('keydown', e => {
         if (e.key === 'Enter') {
             e.preventDefault();
