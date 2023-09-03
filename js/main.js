@@ -281,7 +281,6 @@ function createClient(host, port, url, reconnected) {
 
         localStorage.setItem('xechat-host', host + ':' + port)
         connecting = false
-        reconnectTimes = 0
 
         connectionInfo = {
             'host': host,
@@ -319,6 +318,7 @@ function createClient(host, port, url, reconnected) {
     }
 
     socket.onerror = e => {
+        closed = true
         if (timeoutFlag) {
             return
         }
@@ -429,6 +429,7 @@ function msgHandler(msg) {
             userStateMsgHandler(msg)
             break
         case 'ONLINE_USERS':
+            reconnectTimes = 0
             onlineUserMsgHandler(msg)
             break
     }
