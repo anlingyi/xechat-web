@@ -7,3 +7,5 @@ XEChat-Idea Web版
 [原项目](https://github.com/anlingyi/xechat-idea)
 
 [WebSocket接入文档](https://xeblog.cn/articles/112)
+
+测试地址：[http://xeblog.cn/xechat-web/](http://xeblog.cn/xechat-web/)
