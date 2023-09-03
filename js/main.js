@@ -7,6 +7,8 @@ let serverList
 let closed
 let reconnectTimes
 let userMap
+let heartbeatInterval
+let connectionInfo = {}
 
 // ws连接地址
 const host = '127.0.0.1'
@@ -229,9 +231,8 @@ function helpCmdHandler() {
         ' > Tips: "{ }"表示输入参数占位符，"[ ]"内的参数为可选参数，所有参数均以空格分隔。<br/>' +
         '<br/>' +
         ' <b>Version ' + version + '</b><br/>' +
-        ' --------------<br/>' +
-        ' <div class="help-url">&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="https://github.com/anlingyi/xechat-web">[开源]</a> <a target="_blank" href="https://xeblog.cn/?tag=xechat-idea">[更多]</a></div>' +
-        ' --------------<br/>'
+        ' <br/><div class="help-url">&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="https://github.com/anlingyi/xechat-web">[开源]</a> <a target="_blank" href="https://xeblog.cn/?tag=xechat-idea">[更多]</a></div><br/>'
+
     showConsole('<div class="help">' + str +'</div>')
 }
 
@@ -280,9 +281,15 @@ function createClient(host, port, url, reconnected) {
         localStorage.setItem('xechat-host', host + ':' + port)
         connecting = false
         reconnectTimes = 0
+
+        connectionInfo = {
+            'host': host,
+            'port': port
+        }
     }
 
     socket.onclose = e => {
+        clearInterval(heartbeatInterval)
         if (timeoutFlag) {
             return
         }
@@ -335,7 +342,7 @@ function heartbeatAction(sec) {
         "action": "HEARTBEAT"
     }
 
-    const heartbeatInterval = setInterval(() => {
+    heartbeatInterval = setInterval(() => {
         if (checkSocket()) {
             client.send(JSON.stringify(msg))
         } else {
@@ -449,8 +456,9 @@ function userMsgHandler(msg) {
     const body = msg.body
     const type = body.msgType
     let content = ''
-    if (type == 'IMAGE') {
-        content = '[查看图片]'
+    if (type === 'IMAGE') {
+        let downloadUrl = 'http://' + connectionInfo.host + ':' + connectionInfo.port + '/download/' + body.content
+        content = '[<a title="查看图片" target="_blank" href="' + downloadUrl + '">查看图片</a>]'
     } else {
         content = body.content
     }

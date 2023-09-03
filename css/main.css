@@ -65,7 +65,7 @@ body {
     margin-left: 5px;
 }
 
-.help-url a {
+a {
     text-decoration: none;
     outline: none;
     color: rgba(227, 223, 223, 0.94);
