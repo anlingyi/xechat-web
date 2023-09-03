@@ -1,5 +1,9 @@
 const version = 'v1.0.0-beta'
 
+const host = '127.0.0.1'
+const port = 1025
+const url = '/xechat'
+
 let client
 let username
 let connecting
@@ -9,11 +13,6 @@ let reconnectTimes
 let userMap
 let heartbeatInterval
 let connectionInfo = {}
-
-// ws连接地址
-const host = '127.0.0.1'
-const port = 1025
-const url = '/xechat'
 
 $(() => {
     helpCmdHandler()
@@ -170,23 +169,22 @@ function loginCmdHandler(params) {
 
     let h = getCmdValue(params, 'h')
     let p = getCmdValue(params, 'p')
-    const serverNum = getCmdValue(params, 's')
-
     if (!h && !p) {
         const cacheHost = localStorage.getItem('xechat-host')
         if (cacheHost) {
             h = cacheHost.split(':')[0]
             p = cacheHost.split(':')[1]
         }
-    } else {
-        if (!h) {
-            h = host
-        }
-        if (!p) {
-            p = port
-        }
     }
 
+    if (!h) {
+        h = host
+    }
+    if (!p) {
+        p = port
+    }
+
+    const serverNum = getCmdValue(params, 's')
     if (serverNum) {
         updateServerList()
         if (serverList && serverList.length > 0) {
@@ -642,23 +640,29 @@ function getUUID() {
  * @returns {string}
  */
 function generateUUID() {
-    if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
-        const data = new Uint32Array(4)
-        window.crypto.getRandomValues(data)
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            const r = (data[0] & 0x3fffffff + (data[1] & 0x0fffffff) * 0x10000000) % 16 | 0
-            data[0] >>= 4
-            data[1] >>= 4
-            return (c === 'x' ? r : (r & 0x7 | 0x8)).toString(16)
-        })
-    } else {
-        console.warn('浏览器不支持crypto API，使用备用方法生成UUID')
-        // 在不支持crypto API的环境中使用备用方法
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            const r = Math.random() * 16 | 0
-            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16)
-        })
+    const hexDigits = "0123456789abcdef";
+    let uuid = "";
+
+    for (let i = 0; i < 36; i++) {
+        switch (i) {
+            case 8:
+            case 13:
+            case 18:
+            case 23:
+                uuid += "-";
+                break;
+            case 14:
+                uuid += "4"; // 生成UUID的第14位为4
+                break;
+            case 19:
+                uuid += hexDigits[(Math.random() * 4) | 8]; // 生成UUID的第19位为8, 9, a, 或 b
+                break;
+            default:
+                uuid += hexDigits[Math.floor(Math.random() * 16)];
+        }
     }
+
+    return uuid;
 }
 
 /**
