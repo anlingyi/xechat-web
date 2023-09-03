@@ -227,7 +227,7 @@ function helpCmdHandler() {
         '<br/>' +
         ' <b>Version ' + version + '</b><br/>' +
         ' --------------<br/>' +
-        ' <div class="help-url">&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="https://github.com/anlingyi/xechat-idea">[开源]</a> <a target="_blank" href="https://xeblog.cn/?tag=xechat-idea">[更多]</a></div>' +
+        ' <div class="help-url">&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="https://github.com/anlingyi/xechat-web">[开源]</a> <a target="_blank" href="https://xeblog.cn/?tag=xechat-idea">[更多]</a></div>' +
         ' --------------<br/>'
     showConsole('<div class="help">' + str +'</div>')
 }
