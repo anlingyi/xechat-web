@@ -382,6 +382,7 @@ function sendUserMsg(content) {
  */
 function msgHandler(msg) {
     const type = msg.type
+    msg = JSON.parse(escapeHtml(JSON.stringify(msg)))
     switch (type) {
         case 'SYSTEM':
             systemMsgHandler(msg)
@@ -499,6 +500,11 @@ function flushUserTotal() {
     showTitle('Debug(' + userMap.size  + ')')
 }
 
+/**
+ * 标题显示
+ *
+ * @param content
+ */
 function showTitle(content) {
     $('#title').text(content)
 }
@@ -623,3 +629,17 @@ function generateUUID() {
         })
     }
 }
+
+/**
+ * 转义防注入
+ *
+ * @param html
+ * @returns {string}
+ */
+function escapeHtml(html) {
+    const element = document.createElement('div');
+    element.appendChild(document.createTextNode(html));
+    return element.innerHTML;
+}
+
+
