@@ -120,9 +120,12 @@ function showServerCmdHandler(params) {
     updateServerList()
 
     if (serverList && serverList.length > 0) {
-        let str = '<div>&nbsp;|&nbsp;&nbsp;编号&nbsp;&nbsp;|&nbsp;&nbsp;鱼塘&nbsp;&nbsp;|</div>'
+        let str = '<div>&nbsp;|&nbsp;&nbsp;编号&nbsp;&nbsp;|&nbsp;&nbsp;鱼塘&nbsp;&nbsp;|&nbsp;&nbsp;状态&nbsp;&nbsp;|</div>'
         for (let i = 0; i < serverList.length; i++) {
-            str += '<div>&nbsp;|&nbsp;&nbsp;' + i + '&nbsp;&nbsp;|&nbsp;&nbsp;'+ serverList[i].name + '&nbsp;&nbsp;|</div>'
+            let serverInfo = serverList[i];
+            let status = checkSocket() && connectionInfo.host == serverInfo.ip && connectionInfo.port == serverInfo.port ? '已连接' : '未连接'
+            str += '<div>&nbsp;|&nbsp;&nbsp;' + i + '&nbsp;&nbsp;|&nbsp;&nbsp;'+ serverInfo.name
+                + '&nbsp;&nbsp;|&nbsp;&nbsp;|' + status  + '&nbsp;&nbsp;|</div>'
         }
         showConsole(str)
     } else {
