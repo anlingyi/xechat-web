@@ -436,7 +436,7 @@ function userMsgHandler(msg) {
     }
 
     showConsole('<div class="usermsg"><b>[' + msg.time + '] [' + region + '] '
-        + user.username + ' (' + status + ')' + platform + role + '：' + content + '</div>')
+        + user.username + ' (' + status + ')' + platform + role + '：</b>' + content + '</div>')
 
     gotoConsoleLow()
 }
