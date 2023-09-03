@@ -1,10 +1,12 @@
 const version = 'v1.0.0-beta'
 
-let socket
+let client
 let username
 let connecting
 let serverList
-const userMap = new Map()
+let closed
+let reconnectTimes
+let userMap
 
 // ws连接地址
 const host = '127.0.0.1'
@@ -66,7 +68,8 @@ function commandHandler(cmdStr) {
             return
         case 'exit':
             if (checkSocket()) {
-                socket.close()
+                client.close()
+                closed = true
             }
             return
     }
@@ -101,7 +104,7 @@ function setStatusCmdHandler(params) {
         "body": status
     }
 
-    socket.send(JSON.stringify(msg))
+    client.send(JSON.stringify(msg))
     showConsole('<div>状态值设置成功！</div>')
 }
 
@@ -207,7 +210,7 @@ function loginCmdHandler(params) {
 
     connecting = true
     showConsole('<div>正在连接服务器...</div>')
-    socket = createClient(h, p, url)
+    client = createClient(h, p, url, false)
 }
 
 /**
@@ -250,9 +253,12 @@ function getCmdValue(str, paramName) {
  * 创建WebSocket连接
  *
  * @param url
+ * @param port
+ * @param url
+ * @param reconnected
  * @returns {WebSocket}
  */
-function createClient(host, port, url) {
+function createClient(host, port, url, reconnected) {
     const socket = new WebSocket('ws://' + host + ':'  + port + url)
     let timeoutFlag
     const timeout = setTimeout(() => {
@@ -269,11 +275,11 @@ function createClient(host, port, url) {
         // 心跳检测动作
         heartbeatAction(15)
         // 登录动作
-        loginAction(username, 'FISHING', '')
-        cleanConsole()
+        loginAction(username, 'FISHING', '', reconnected)
 
         localStorage.setItem('xechat-host', host + ':' + port)
         connecting = false
+        reconnectTimes = 0
     }
 
     socket.onclose = e => {
@@ -282,11 +288,25 @@ function createClient(host, port, url) {
         }
 
         connecting = false
-        showTitle('控制台')
         showConsole('<div>已断开连接！</div>')
+
+        if (!closed) {
+            if (reconnectTimes++ < 3) {
+                const timeout = setTimeout(() => {
+                    clearTimeout(timeout)
+                    showConsole('<div>正在重新连接服务器...</div>')
+                    connecting = true
+                    client = createClient(host, port, url, true)
+                }, reconnectTimes * 1000)
+                return
+            }
+        }
+
+        showTitle('控制台')
     }
 
     socket.onmessage = e => {
+        closed = false
         msgHandler(JSON.parse(e.data))
     }
 
@@ -302,7 +322,7 @@ function createClient(host, port, url) {
 }
 
 function checkSocket() {
-    return socket && socket.readyState === WebSocket.OPEN
+    return client && client.readyState === WebSocket.OPEN
 }
 
 /**
@@ -317,7 +337,7 @@ function heartbeatAction(sec) {
 
     const heartbeatInterval = setInterval(() => {
         if (checkSocket()) {
-            socket.send(JSON.stringify(msg))
+            client.send(JSON.stringify(msg))
         } else {
             clearInterval(heartbeatInterval)
         }
@@ -330,8 +350,9 @@ function heartbeatAction(sec) {
  * @param username 昵称
  * @param status 状态
  * @param token 管理员令牌
+ * @param reconnected 重连标识
  */
-function loginAction(username, status, token) {
+function loginAction(username, status, token, reconnected) {
     if (!checkSocket()) {
         return
     }
@@ -341,7 +362,7 @@ function loginAction(username, status, token) {
         "body": {
             "username": username,
             "status": status,
-            "reconnected": false,
+            "reconnected": reconnected,
             "pluginVersion": "",
             "token": token,
             "uuid": getUUID(),
@@ -349,7 +370,7 @@ function loginAction(username, status, token) {
         }
     }
 
-    socket.send(JSON.stringify(msg))
+    client.send(JSON.stringify(msg))
 }
 
 /**
@@ -372,7 +393,7 @@ function sendUserMsg(content) {
         }
     }
 
-    socket.send(JSON.stringify(msg))
+    client.send(JSON.stringify(msg))
 }
 
 /**
@@ -412,7 +433,6 @@ function msgHandler(msg) {
  */
 function systemMsgHandler(msg) {
     showConsole('<div class="sysmsg">[' + msg.time + '] 系统消息：' + msg.body + '</div>')
-    gotoConsoleLow()
 }
 
 /**
@@ -437,8 +457,6 @@ function userMsgHandler(msg) {
 
     showConsole('<div class="usermsg"><b>[' + msg.time + '] [' + region + '] '
         + user.username + ' (' + status + ')' + platform + role + '：</b>' + content + '</div>')
-
-    gotoConsoleLow()
 }
 
 /**
@@ -459,6 +477,9 @@ function historyMsgHandler(msg) {
  * @param msg
  */
 function statusUpdateMsgHandler(msg) {
+    if (!userMap) {
+        userMap = new Map
+    }
     userMap.set(msg.user.id, msg.user)
 }
 
@@ -486,6 +507,7 @@ function userStateMsgHandler(msg) {
 function onlineUserMsgHandler(msg) {
     localStorage.setItem('xechat-username', username)
 
+    userMap = new Map
     msg.body.userList.forEach(user => {
         userMap.set(user.id, user)
     })
@@ -564,6 +586,7 @@ function showRole(role) {
  */
 function showConsole(content) {
     $('#console').append(content)
+    gotoConsoleLow()
 }
 
 /**
@@ -637,9 +660,9 @@ function generateUUID() {
  * @returns {string}
  */
 function escapeHtml(html) {
-    const element = document.createElement('div');
-    element.appendChild(document.createTextNode(html));
-    return element.innerHTML;
+    const element = document.createElement('div')
+    element.appendChild(document.createTextNode(html))
+    return element.innerHTML
 }
 
 
