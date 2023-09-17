@@ -451,7 +451,7 @@ function systemMsgHandler(msg) {
  */
 function userMsgHandler(msg) {
     const user = msg.user
-    const region = showUserRegion(user.region)
+    const region = user.shortRegion
     const role = showRole(user.role)
     const status = showUserStatus(user.status)
     const platform = user.platform === 'WEB' ? ' ༄' : ' ♨'
@@ -539,22 +539,6 @@ function flushUserTotal() {
  */
 function showTitle(content) {
     $('#title').text(content)
-}
-
-/**
- * 用户地区显示
- *
- * @param region
- * @returns {string}
- */
-function showUserRegion(region) {
-    let str = '未知'
-    if (region.city) {
-        str = region.city
-    } else if (region.province) {
-        str = region.province
-    }
-    return str === '未知' ? '中国' : str
 }
 
 /**
