@@ -8,4 +8,4 @@ XEChat-Idea Web版
 
 [WebSocket接入文档](https://xeblog.cn/articles/112)
 
-测试地址：[http://xeblog.cn/xechat-web/](http://xeblog.cn/xechat-web/)
+测试地址：[http://x.xeblog.cn/](http://x.xeblog.cn/)
