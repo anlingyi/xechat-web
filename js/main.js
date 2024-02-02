@@ -441,7 +441,8 @@ function msgHandler(msg) {
  * @param msg
  */
 function systemMsgHandler(msg) {
-    showConsole('<div class="sysmsg">[' + msg.time + '] 系统消息：' + msg.body + '</div>')
+    let msgStr = msg.body.replaceAll("\n","<br>");
+    showConsole('<div class="sysmsg">[' + msg.time + '] 系统消息：' + msgStr + '</div>')
 }
 
 /**
